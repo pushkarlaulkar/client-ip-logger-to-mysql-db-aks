@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: web
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - #domain name for the SSL cert 
+      secretName: cert-tls  # Uses your existing TLS secret
+  rules:
+    - host: #domain name for the SSL cert 
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: flask-service
+                port:
+                  number: 8080
