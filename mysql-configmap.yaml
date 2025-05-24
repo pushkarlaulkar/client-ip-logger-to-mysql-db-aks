@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-db-config
+  namespace: web
+data:
+  db-host: mysql-cluster-primary.db.svc.cluster.local
+  db-name: flaskdb
+  db-user: root
