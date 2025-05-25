@@ -14,11 +14,11 @@ Instructions to deploy **Client IP Logger in MySQL DB** on Azure Kubernetes Serv
         --set auth.replicationPassword= \
         --set primary.persistence.enabled=true \
         --set primary.persistence.size=10Gi \
-        --set primary.persistence.storageClass=standard \
+        --set primary.persistence.storageClass=managed-csi \
         --set secondary.replicaCount=2 \
         --set secondary.persistence.enabled=true \
         --set secondary.persistence.size=10Gi \
-        --set secondary.persistence.storageClass=standard \
+        --set secondary.persistence.storageClass=managed-csi \
         --set volumePermissions.enabled=true
      ```
   3. Create the Table in MySQL which will store the Client IP
