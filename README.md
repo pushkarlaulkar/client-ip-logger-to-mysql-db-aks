@@ -95,8 +95,11 @@ Instructions to deploy **Client IP Logger in MySQL DB** on Azure Kubernetes Serv
  | id | ip_address     |
  +----+----------------+
  |  1 | 94.203.158.127 |
+ |  2 | 104.28.194.97  |
+ |  3 | 15.204.238.116 |
+ |  4 | 104.28.226.98  |
  +----+----------------+
- 1 row in set (0.000 sec)
+ 4 rows in set (0.001 sec)
  ```
 
  Then check the **Secondary** db
@@ -128,6 +131,9 @@ Instructions to deploy **Client IP Logger in MySQL DB** on Azure Kubernetes Serv
  | id | ip_address     |
  +----+----------------+
  |  1 | 94.203.158.127 |
+ |  2 | 104.28.194.97  |
+ |  3 | 15.204.238.116 |
+ |  4 | 104.28.226.98  |
  +----+----------------+
- 1 row in set (0.000 sec)
+ 4 rows in set (0.001 sec)
  ```
