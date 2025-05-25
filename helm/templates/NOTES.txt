@@ -1,0 +1,3 @@
+Get the IP address by running below command. Make an entry in your registrar to point the domain to this IP address.
+
+kubectl -n your_namespace get ingress yopass-ingress
