@@ -62,4 +62,72 @@ Instructions to deploy **Client IP Logger in MySQL DB** on Azure Kubernetes Serv
      ```
   8. Put the FQDN for which the secret has been created in ` app-routing-ingress.yml ` file and then run the command ` kubectl -n web apply -f app-routing-ingress.yml `.
   9. Run `kubectl -n web get ingress` to retrieve the IP. This may take some time to match with the **LoadBalancer** IP above. Point the domain name in your registrar to the IP address.
- 10. Access the app using ` curl -X POST https://your_domain_name/log-ip `.
+ 10. Access the app using ` curl -X POST https://your_domain_name/log-ip `. You will see a JSON response showing your client IP. This will also be recorded in DB.
+
+ ----------------------------------------------------------
+
+ To test database replication, first check the **Primary** db
+ 
+ ```
+ pushkar [ ~/client-ip-logger-to-mysql-db-aks ]$ kubectl exec -it -n db mysql-cluster-primary-0 -- bash
+ Defaulted container "mysql" out of: mysql, preserve-logs-symlinks (init), volume-permissions (init)
+ I have no name!@mysql-cluster-primary-0:/$ mysql -uroot -p
+ Enter password: 
+ Welcome to the MySQL monitor.  Commands end with ; or \g.
+ Your MySQL connection id is 155
+ Server version: 9.3.0 Source distribution
+ 
+ Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+ 
+ Oracle is a registered trademark of Oracle Corporation and/or its
+ affiliates. Other names may be trademarks of their respective
+ owners.
+ 
+ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+ 
+ mysql> use flaskdb;
+ Reading table information for completion of table and column names
+ You can turn off this feature to get a quicker startup with -A
+ 
+ Database changed
+ mysql> select * from client_ips;
+ +----+----------------+
+ | id | ip_address     |
+ +----+----------------+
+ |  1 | 94.203.158.127 |
+ +----+----------------+
+ 1 row in set (0.000 sec)
+ ```
+
+ Then check the **Secondary** db
+
+ ```
+ pushkar [ ~/client-ip-logger-to-mysql-db-aks ]$ kubectl exec -it -n db mysql-cluster-secondary-0 -- bash
+ Defaulted container "mysql" out of: mysql, preserve-logs-symlinks (init), volume-permissions (init)
+ I have no name!@mysql-cluster-secondary-0:/$ mysql -uroot -p
+ Enter password: 
+ Welcome to the MySQL monitor.  Commands end with ; or \g.
+ Your MySQL connection id is 155
+ Server version: 9.3.0 Source distribution
+ 
+ Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+ 
+ Oracle is a registered trademark of Oracle Corporation and/or its
+ affiliates. Other names may be trademarks of their respective
+ owners.
+ 
+ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+ 
+ mysql> use flaskdb;
+ Reading table information for completion of table and column names
+ You can turn off this feature to get a quicker startup with -A
+ 
+ Database changed
+ mysql> select * from client_ips;
+ +----+----------------+
+ | id | ip_address     |
+ +----+----------------+
+ |  1 | 94.203.158.127 |
+ +----+----------------+
+ 1 row in set (0.000 sec)
+ ```
