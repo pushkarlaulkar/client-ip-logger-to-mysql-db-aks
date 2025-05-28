@@ -558,3 +558,42 @@ To install this app using Helm using your own nginx ingress, perform below steps
   ```
 
 -----------------------------
+
+**ArgoCD** installation using the default **App Routing** add on
+
+To install this app using ArgoCD, perform below steps
+  1. Create a namespace. ` kubectl create ns argocd `.
+  2. Create a tls secret named ` argocd-tls ` which has the domain's certificate & private key by running below command. The domain's .crt & .key file should already be present.
+
+     ```
+     kubectl -n argocd create secret tls argocd-tls --cert=argocd_domain_name.crt --key=argocd_domain_name.key
+     ```
+  3. Run the command ` kubectl -n app-routing-system get svc nginx ` to confirm if a **LoadBalancer** IP has been provisioned.
+
+     ```
+     pushkar [ ~ ]$ kubectl -n app-routing-system get svc nginx
+     NAME    TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)                      AGE
+     nginx   LoadBalancer   10.0.58.180   20.174.45.64   80:32767/TCP,443:30598/TCP   110s
+     ```
+  4. Apply **ArgoCD** manifest file
+     
+     ```
+     kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+     ```
+  5. Patch the ConfigMap **argocd-cmd-params-cm** to add `server.insecure : true`, then scale the deployment to 0 & then 1
+
+     ```
+     kubectl -n argocd patch configmap argocd-cmd-params-cm --type merge -p '{"data":{"server.insecure":"true"}}'
+     kubectl -n argocd scale deploy argocd-server --replicas=0
+     kubectl -n argocd scale deploy argocd-server --replicas=1
+     ```
+  6. Put the FQDN for which the argocd secret has been created in ` argocd-web-app-routing-ingress.yml ` file and then run the command ` kubectl -n argocd apply -f argocd-web-app-routing-ingress.yml `
+  7. Run ` kubectl -n argocd get ingress ` to retrieve the IP. This may take some time to match with the **LoadBalancer** IP above. Point the domain name in your registrar to the IP address.
+  8. Access ArgoCD using ` https://argocd_domain_name `.
+  9. To get the initial admin user password run the command
+
+     ```
+     kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo
+     ```
+
+-----------------------------
