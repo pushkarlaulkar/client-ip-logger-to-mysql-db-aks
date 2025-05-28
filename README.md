@@ -477,7 +477,7 @@ To install this app using Helm using your own nginx ingress, perform below steps
   6. Run the command to install **Client IP Logger**
 
      ```
-     helm install client-ip-logger ./helm --namespace web --create-namespace --set ingressClassName="web-app-routing" --set domain_name=your_preferred_fqdn --set-file tlsSecret.cert=domain_name.crt --set-file tlsSecret.key=domain_name.key --set mysql_root_password=root_password_set_above
+     helm install client-ip-logger ./helm --namespace web --create-namespace --set ingressClassName="nginx" --set domain_name=your_preferred_fqdn --set-file tlsSecret.cert=domain_name.crt --set-file tlsSecret.key=domain_name.key --set mysql_root_password=root_password_set_above
      ```
   5. Run `kubectl -n web get ingress` to retrieve the IP. This may take some time to match with the **LoadBalancer** IP above. Point the domain name in your registrar to the IP address.
   6. Access the app using ` curl -X POST https://your_domain_name/log-ip `. You will see a JSON response showing your client IP. This will also be recorded in DB.
